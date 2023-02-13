@@ -1,35 +1,31 @@
 import { AxiosRequestConfig } from "axios";
-import React, { useEffect, useRef, useState } from "react";
 import BulkUpload, {
   EventType,
-  FileHierarchy,
   FileObj,
   StandardFile,
-  UploadType,
-} from "./bulk-upload";
-import { FileHierarchyFetcher, Directory } from "files-hierarchy";
-
-type FilesResponse = {
+} from "browser-bulk-upload";
+import { Directory, FileHierarchyFetcher } from "files-hierarchy";
+import React, { useEffect, useRef, useState } from "react";
+export type FilesResponse = {
   inQueue: StandardFile<Partial<FileObj>>;
   inProgress: StandardFile<Partial<FileObj>>;
   completed: number; //StandardFile<Partial<FileObj>>;
   failed: StandardFile<Partial<FileObj>>;
 };
-type ChildrenParam = {
-  startUpload: (files: File[] | Directory[]) => void;
+export type ChildrenParam = {
+  startUpload: (files: any[]) => void;
   uploadInProgress: boolean;
   files: FilesResponse;
   cancelUpload: (fileObj: FileObj) => void;
   retryUpload: (fileObj: FileObj[]) => void;
-  updateQueue: (file: File[]) => void;
   destroy: () => void;
   fetchFilesHierarchy: (cb: (directories: Array<Directory>) => void) => void;
 };
-type Props = {
+export type Props = {
   children: (childrenParam: ChildrenParam) => React.DetailedHTMLProps<any, any>;
   concurrency: number;
   requestArguments: (fileObj: FileObj) => Partial<AxiosRequestConfig>;
-  uploadType?: UploadType;
+  isFileHierarchy?: Boolean;
   requestOptions?: {
     downloadProgress?: boolean;
     uploadProgress?: boolean;
@@ -37,16 +33,16 @@ type Props = {
   uploadStarted?: () => void;
   onUploadComplete?: () => void;
   progressFrequencyUpdate?: number;
-  fileHierarchyProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  fileHierarchyProps?: Record<string, any>;
 };
-export default function FileBulkUpload({
+export default function ReactBulkUpload({
   children,
   concurrency,
   requestArguments,
   onUploadComplete,
   requestOptions,
   progressFrequencyUpdate,
-  uploadType,
+  isFileHierarchy,
   fileHierarchyProps,
   uploadStarted,
 }: Props) {
@@ -82,7 +78,7 @@ export default function FileBulkUpload({
       requestOptions,
       onUpdate,
       onUploadComplete,
-      uploadType,
+      isFileHierarchy: !!isFileHierarchy,
     });
     const controls = bulkUpload.getControls();
     bulkUploadInstance.current = bulkUpload;
@@ -126,19 +122,18 @@ export default function FileBulkUpload({
     bulkUploadInstance.current?.getControls().destroy();
   };
 
-  const updateQueue = (files: File[]) => {
-    bulkUploadInstance.current?.getControls().updateQueue(files);
-  };
-
   return children({
     files: fileResponses,
     startUpload,
     cancelUpload,
     destroy,
     retryUpload,
-    updateQueue,
     uploadInProgress,
     fetchFilesHierarchy: (cb) => {
+      if (!isFileHierarchy)
+        throw new Error(
+          "'isFileHierarchy' flag is not set, please enable it before accessing folder-structure hierarchy"
+        );
       fetchHierarchy().then(cb);
     },
   });

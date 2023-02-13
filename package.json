@@ -1,24 +1,28 @@
 {
-  "name": "bulk-upload-react",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "react-bulk-upload",
+  "license": "MIT",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "axios": "^1.3.2",
-    "files-hierarchy": "^1.3.0-0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "lint": "tsc"
   },
   "devDependencies": {
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
-    "@vitejs/plugin-react": "^3.1.0",
-    "typescript": "^4.9.3",
-    "vite": "^4.1.0"
+    "@changesets/cli": "^2.26.0",
+    "@types/react": "^18.0.28",
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "browser-bulk-upload": "^0.1.0-0",
+    "files-hierarchy": "^1.3.0-0",
+    "react": "^18.2.0"
+  },
+  "author": "Mukul",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MUKUL47/react-bulk-upload.git"
   }
 }
